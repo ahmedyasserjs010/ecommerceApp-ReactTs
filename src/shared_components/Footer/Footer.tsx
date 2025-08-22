@@ -9,7 +9,7 @@ import {
 
 export default function Footer() {
   return (
-    <footer className="bg-green-50 dark:bg-gray-900 text-gray-700 dark:text-gray-200 mt-10 py-8 transition-colors duration-300 shadow-inner">
+    <footer className="bg-green-50 dark:bg-gray-900 text-gray-700 dark:text-gray-200 py-8 transition-colors duration-300 shadow-inner">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-8 px-4">
         {/* Text and App Link */}
         <div className="flex flex-col gap-3 w-full lg:w-1/3">
@@ -35,12 +35,14 @@ export default function Footer() {
         <div className="flex items-center gap-6 w-full lg:w-1/3 justify-center">
           <a
             href="#"
+            title="Download on the Apple App Store"
             className="text-gray-800 dark:text-gray-200 hover:text-green-600 dark:hover:text-green-400 transition-colors duration-300"
           >
             <FaApple size={36} />
           </a>
           <a
             href="#"
+            title="Get it on Google Play"
             className="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 transition-colors duration-300"
           >
             <FaGooglePlay size={36} />

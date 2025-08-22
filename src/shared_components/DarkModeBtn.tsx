@@ -9,7 +9,7 @@ const DarkModeBtn = () => {
   return (
     <button
       onClick={toggleDarkMode}
-      className={`relative w-32 h-14 flex items-center px-2 rounded-full shadow-xl hover:cursor-pointer transition-all duration-300
+      className={`  relative w-32 h-14 flex items-center px-2 rounded-full shadow-xl hover:cursor-pointer transition-all duration-300
         ${
           darkMode
             ? "bg-gradient-to-r from-gray-600 to-gray-800 text-green-400"
