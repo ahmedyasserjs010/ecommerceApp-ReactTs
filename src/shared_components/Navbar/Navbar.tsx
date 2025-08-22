@@ -16,6 +16,9 @@ export default function Navbar() {
     { path: "/products", label: "Products" },
     { path: "/categories", label: "Categories" },
     { path: "/wishlist", label: "Wishlist" },
+    { path: "/login", label: "Login" },
+    { path: "/signup", label: "Signup" },
+    // { path: "/forgot-password", label: "Forgot Password" },
   ];
 
   return (
