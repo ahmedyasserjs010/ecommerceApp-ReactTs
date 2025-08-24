@@ -150,7 +150,7 @@ export default function Navbar() {
               : null
           }
           {/* زرار الدارك مود */}
-          <DarkModeBtn />
+          <DarkModeBtn setIsOpen={setIsOpen}/>
 
           {
             userLogin !== null ?
