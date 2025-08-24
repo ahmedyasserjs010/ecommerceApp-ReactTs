@@ -9,6 +9,7 @@ import { useProductById, useProducts } from '../../../services/Products/Hooks/us
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import SpinnersCart from '../../../shared_components/SpinnersCart/SpinnersCart';
+import { FaCartPlus, FaHeart } from 'react-icons/fa';
 
 interface Product {
   id: string;
@@ -33,6 +34,11 @@ export default function SpecialProduct() {
   // Use traditional state for related products (like in ProductDetails)
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [relatedLoading, setRelatedLoading] = useState(true);
+  
+  // State for cart and wishlist operations
+  const [loadingProductId, setLoadingProductId] = useState<string | null>(null);
+  const [likingProductId, setLikingProductId] = useState<string | null>(null);
+  const [likedProducts, setLikedProducts] = useState<Set<string>>(new Set());
 
   // Fetch related products using axios (same as ProductDetails)
   useEffect(() => {
@@ -53,6 +59,34 @@ export default function SpecialProduct() {
         });
     }
   }, [category, id]);
+
+  // Handle add to cart
+  const handleAddToCart = (product: Product) => {
+    setLoadingProductId(product.id);
+    // Simulate API call
+    setTimeout(() => {
+      toast.success("Added to cart!", { duration: 1000, position: 'top-center' });
+      setLoadingProductId(null);
+    }, 1000);
+  };
+
+  // Handle like product
+  const handleLikeProduct = (product: Product) => {
+    setLikingProductId(product.id);
+    // Simulate API call
+    setTimeout(() => {
+      const newLikedProducts = new Set(likedProducts);
+      if (newLikedProducts.has(product.id)) {
+        newLikedProducts.delete(product.id);
+        toast.success("Removed from wishlist!", { duration: 1000, position: 'top-center' });
+      } else {
+        newLikedProducts.add(product.id);
+        toast.success("Added to wishlist!", { duration: 1000, position: 'top-center' });
+      }
+      setLikedProducts(newLikedProducts);
+      setLikingProductId(null);
+    }, 1000);
+  };
 
   // Show loading if either product or related products are loading
   if (productLoading || relatedLoading) {
@@ -75,7 +109,6 @@ export default function SpecialProduct() {
 
   // Extract product details from React Query response (same structure as ProductDetails)
   const productDetails: Product = productData?.data.data;
-  console.log(productDetails);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
@@ -118,20 +151,31 @@ export default function SpecialProduct() {
             </div>
             <div className="flex gap-4">
               <button 
-                onClick={() => {
-                  toast.success("Added to cart!", { duration: 1000, position: 'top-center' });
-                }}
-                className="bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white px-6 py-2 rounded transition-colors duration-300"
+                onClick={() => handleAddToCart(productDetails)}
+                disabled={loadingProductId === productDetails.id}
+                className="bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white px-6 py-2 rounded transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <i className="fa-solid fa-cart-plus"></i> Add to cart
+                {loadingProductId === productDetails.id ? (
+                  <RingLoader size={20} color="#fff" />
+                ) : (
+                  <>
+                    <FaCartPlus className="inline mr-2" /> Add to cart
+                  </>
+                )}
               </button>
               <button 
-                onClick={() => {
-                  toast.success("Added to wishlist!", { duration: 1000, position: 'top-center' });
-                }}
-                className="bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white px-6 py-2 rounded transition-colors duration-300"
+                onClick={() => handleLikeProduct(productDetails)}
+                disabled={likingProductId === productDetails.id}
+                className={`${likedProducts.has(productDetails.id) ? 'bg-red-600 dark:bg-red-500' : 'bg-orange-600 dark:bg-orange-500'} hover:bg-orange-700 dark:hover:bg-orange-400 text-white px-6 py-2 rounded transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed`}
               >
-                <i className="fa-solid fa-heart"></i> Add to wishlist
+                {likingProductId === productDetails.id ? (
+                  <RingLoader size={20} color="#fff" />
+                ) : (
+                  <>
+                    <FaHeart className="inline mr-2" /> 
+                    {likedProducts.has(productDetails.id) ? "Remove from wishlist" : "Add to wishlist"}
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -151,24 +195,37 @@ export default function SpecialProduct() {
                   alt={product.title} 
                   className="w-full transition-transform duration-300 group-hover:scale-105" 
                 />
-                <div className="absolute top-10 left-0 right-0 flex justify-between px-3">
-                  <button 
+                <div className="absolute top-10 left-0 right-0 flex justify-between px-3 z-10">
+                  <button
                     onClick={(e) => {
                       e.preventDefault();
-                      toast.success("Added to cart!", { duration: 1000, position: 'top-center' });
+                      handleAddToCart(product);
                     }}
-                    className="bg-orange-600 dark:bg-orange-500 text-white font-semibold px-2 py-2 rounded-md hover:bg-orange-700 dark:hover:bg-orange-400 transition-all duration-500 transform -translate-x-20 opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
+                    disabled={loadingProductId === product.id}
+                    className="bg-orange-500 dark:bg-orange-600 text-white font-semibold px-2 py-2 rounded-md hover:bg-orange-700 dark:hover:bg-orange-500 transition-all duration-500 transform -translate-x-20 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Add to Cart"
                   >
-                    <i className="fa-solid fa-cart-plus text-2xl"></i>
+                    {loadingProductId === product.id ? (
+                      <RingLoader size={20} color="#fff" />
+                    ) : (
+                      <FaCartPlus className="text-2xl" />
+                    )}
                   </button>
+
                   <button 
                     onClick={(e) => {
                       e.preventDefault();
-                      toast.success("Added to wishlist!", { duration: 1000, position: 'top-center' });
+                      handleLikeProduct(product);
                     }}
-                    className="bg-orange-600 dark:bg-orange-500 text-white font-semibold px-2 py-2 rounded-md hover:bg-orange-700 dark:hover:bg-orange-400 transition-all duration-500 transform translate-x-20 opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
+                    disabled={likingProductId === product.id}
+                    className={`${likedProducts.has(product.id) ? 'bg-red-500 dark:bg-red-600' : 'bg-orange-500 dark:bg-orange-600'} text-white font-semibold px-2 py-2 rounded-md hover:bg-orange-700 dark:hover:bg-orange-500 transition-all duration-500 transform translate-x-20 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 disabled:opacity-50 disabled:cursor-not-allowed`}
+                    title={likedProducts.has(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
                   >
-                    <i className="fa-solid fa-heart text-2xl"></i>
+                    {likingProductId === product.id ? (
+                      <RingLoader size={20} color="#fff" />
+                    ) : (
+                      <FaHeart className={`text-2xl ${likedProducts.has(product.id) ? 'text-white' : ''}`} />
+                    )}
                   </button>
                 </div>
                 <div className="p-5 flex flex-col items-center text-center">
