@@ -3,6 +3,7 @@ import { useDisplayCartItems, useUpdateCartItem } from "../../../services/Cart/H
 import { ICartProduct } from "../../../services/types";
 import SpinnersCart from "../../../shared_components/SpinnersCart/SpinnersCart";
 import { useQueryClient } from "@tanstack/react-query";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 export default function Cart() {
   const { data, isLoading, error } = useDisplayCartItems();
@@ -56,93 +57,100 @@ export default function Cart() {
       <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100">
         Shopping Cart
       </h2>
-
-      <table className="w-full text-sm text-gray-500 dark:text-gray-300 border-collapse">
-        <thead className="text-xs uppercase bg-gray-100 dark:bg-gray-700">
-          <tr>
-            <th className="px-6 py-3 text-center">Image</th>
-            <th className="px-6 py-3 text-left">Product</th>
-            <th className="px-6 py-3 text-center">Qty</th>
-            <th className="px-6 py-3 text-center">Price</th>
-            <th className="px-6 py-3 text-center">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((item) => (
-            <tr
-              key={item._id}
-              className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700
+      {
+        products !== null ?
+          <table className="w-full text-sm text-gray-500 dark:text-gray-300 border-collapse">
+            <thead className="text-xs uppercase bg-gray-100 dark:bg-gray-700">
+              <tr>
+                <th className="px-6 py-3 text-center">Image</th>
+                <th className="px-6 py-3 text-left">Product</th>
+                <th className="px-6 py-3 text-center">Qty</th>
+                <th className="px-6 py-3 text-center">Price</th>
+                <th className="px-6 py-3 text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map((item) => (
+                <tr
+                  key={item._id}
+                  className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700
               transition duration-300 ease-in-out hover:scale-[1.01] hover:shadow-lg"
-            >
-              {/* Image */}
-              <td className="px-6 py-4 text-center">
-                <img
-                  src={item.product.imageCover}
-                  alt={item.product.title}
-                  className="w-16 md:w-20 lg:w-24 object-contain rounded-md mx-auto 
+                >
+                  {/* Image */}
+                  <td className="px-6 py-4 text-center">
+                    <img
+                      src={item.product.imageCover}
+                      alt={item.product.title}
+                      className="w-16 md:w-20 lg:w-24 object-contain rounded-md mx-auto 
                     transition-transform duration-300 hover:scale-105"
-                />
-              </td>
+                    />
+                  </td>
 
-              {/* Product Name */}
-              <td className="px-6 py-4 font-medium text-gray-900 dark:text-white text-left">
-                {item.product.title}
-              </td>
+                  {/* Product Name */}
+                  <td className="px-6 py-4 font-medium text-gray-900 dark:text-white text-left">
+                    {item.product.title}
+                  </td>
 
-              {/* Quantity */}
-              <td className="px-6 py-4 text-center">
-                <div className="flex items-center justify-center space-x-2">
-                  <button
-                   
-                    disabled={isPending || item.count <= 1}
-                    className={`h-7 w-7 flex items-center justify-center rounded-full border 
+                  {/* Quantity */}
+                  <td className="px-6 py-4 text-center">
+                    <div className="flex items-center justify-center space-x-2">
+                      <button
+
+                        disabled={isPending || item.count <= 1}
+                        className={`h-7 w-7 flex items-center justify-center rounded-full border 
                       border-gray-300 dark:border-gray-600 
                       text-gray-600 dark:text-gray-300
                       transition duration-200
-                      ${item.count <= 1 || isPending 
-                        ? 'opacity-50 cursor-not-allowed' 
-                        : 'hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer'
-                      }`}
-                  >
-                    -
-                  </button>
-                  <span className="px-3 py-1 text-base font-semibold rounded-md border 
+                      ${item.count <= 1 || isPending
+                            ? 'opacity-50 cursor-not-allowed'
+                            : 'hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer'
+                          }`}
+                      >
+                        -
+                      </button>
+                      <span className="px-3 py-1 text-base font-semibold rounded-md border 
                     border-gray-300 dark:border-gray-600 
                     bg-gray-50 dark:bg-gray-700 dark:text-white min-w-[3rem] text-center">
-                    {isPending ? "..." : item.count}
-                  </span>
-                  <button
-                    
-                    disabled={isPending}
-                    className={`h-7 w-7 flex items-center justify-center rounded-full border 
+                        {isPending ? "..." : item.count}
+                      </span>
+                      <button
+
+                        disabled={isPending}
+                        className={`h-7 w-7 flex items-center justify-center rounded-full border 
                       border-gray-300 dark:border-gray-600 
                       text-gray-600 dark:text-gray-300
                       transition duration-200
-                      ${isPending 
-                        ? 'opacity-50 cursor-not-allowed' 
-                        : 'hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer'
-                      }`}
-                  >
-                    +
-                  </button>
-                </div>
-              </td>
+                      ${isPending
+                            ? 'opacity-50 cursor-not-allowed'
+                            : 'hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer'
+                          }`}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </td>
 
-              {/* Price */}
-              <td className="px-6 py-4 text-center font-semibold text-gray-900 dark:text-white">
-                ${item.price}
-              </td>
+                  {/* Price */}
+                  <td className="px-6 py-4 text-center font-semibold text-gray-900 dark:text-white">
+                    ${item.price}
+                  </td>
 
-              {/* Action */}
-              <td className="px-6 py-4 text-center">
-                <button className="text-red-600 dark:text-red-400 font-medium hover:underline transition duration-200">
-                  Remove
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                  {/* Action */}
+                  <td className="px-6 py-4 text-center">
+                    <button className="text-red-600 dark:text-red-400 font-medium hover:underline transition duration-200">
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          :
+          <DotLottieReact
+            src="https://lottie.host/7117a7fa-c253-4c2b-806e-54bca5a167ab/0fADBnEuyV.lottie"
+            loop
+            autoplay
+          />}
     </div>
   );
 }
