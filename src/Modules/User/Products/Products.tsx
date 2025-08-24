@@ -77,7 +77,7 @@ export default function Products() {
   };
 
   const resetPagination = () => {
-    setDisplayedItemsCount(12);
+    setDisplayedItemsCount(6);
   };
 
   useEffect(() => {

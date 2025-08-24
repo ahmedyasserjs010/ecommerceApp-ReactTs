@@ -232,6 +232,7 @@ export default function Navbar() {
           <div className="flex space-x-4 text-xl">
             {/* Cart Icon */}
             <NavLink
+            onClick={() => setIsOpen(false)}
               to="/cart"
               className={({ isActive }) =>
                 `relative transition-all duration-300 ${isActive ? "scale-125 text-orange-600 dark:text-orange-300" : ""}`
@@ -246,6 +247,7 @@ export default function Navbar() {
 
             {/* Wishlist Icon */}
             <NavLink
+            onClick={() => setIsOpen(false)}
               to="/wishlist"
               className={({ isActive }) =>
                 `relative transition-all duration-300 ${isActive ? "scale-125 text-orange-600 dark:text-orange-300" : ""}`
@@ -262,7 +264,7 @@ export default function Navbar() {
         ) : null}
 
         {/* زرار الدارك مود في الموبايل */}
-        <DarkModeBtn />
+        <DarkModeBtn setIsOpen={setIsOpen} />
 
         <button onClick={LogOut} className="cursor-pointer w-full text-center text-2xl font-medium text-gray-600 dark:text-gray-200 hover:text-orange-600 dark:hover:text-orange-300 transition-colors duration-300">
           Logout

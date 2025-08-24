@@ -3,12 +3,15 @@
 import { Sun, Moon } from "lucide-react";
 import useTheme from "../contexts/themeContext";
 
-const DarkModeBtn = () => {
+const DarkModeBtn = ({setIsOpen}) => {
   const { darkMode, toggleDarkMode } = useTheme();
 
   return (
     <button
-      onClick={toggleDarkMode}
+onClick={() => {
+  setIsOpen(false);
+  toggleDarkMode();
+}}
       className={`  relative w-32 h-14 flex items-center px-2 rounded-full shadow-xl hover:cursor-pointer transition-all duration-300
         ${
           darkMode
