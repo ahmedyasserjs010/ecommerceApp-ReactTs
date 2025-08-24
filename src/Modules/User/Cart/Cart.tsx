@@ -145,15 +145,15 @@ export default function Cart() {
             </tbody>
           </table>
           :
-<>
-        <h3 className="text-center text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">You haven't put anything in your cart yet.</h3>
-          <DotLottieReact
-            src="https://lottie.host/7117a7fa-c253-4c2b-806e-54bca5a167ab/0fADBnEuyV.lottie"
-            loop
-            autoplay
-          />
-</>
-          }
+          <>
+            <h3 className="text-center text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">You haven't put anything in your cart yet.</h3>
+            <DotLottieReact
+              src="https://lottie.host/7117a7fa-c253-4c2b-806e-54bca5a167ab/0fADBnEuyV.lottie"
+              loop
+              autoplay
+            />
+          </>
+      }
 
     </div>
   );
