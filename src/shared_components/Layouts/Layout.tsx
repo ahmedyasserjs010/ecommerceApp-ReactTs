@@ -9,6 +9,7 @@ import { Toaster } from "react-hot-toast";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { CounterProvider } from "../../contexts/useCounterContext";
 import { UserContext, UserContextProvider } from "../../contexts/userContext";
+import ScrollToTop from "../ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,7 @@ export default function Layout() {
 
           {/* Main content in the center */}
           <main className=" mt-36 mb-10">
+            <ScrollToTop />
             <Outlet />
           </main>
 
