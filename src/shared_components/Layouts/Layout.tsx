@@ -7,6 +7,8 @@ import Footer from "../Footer/Footer";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { CounterProvider } from "../../contexts/useCounterContext";
+import { UserContext, UserContextProvider } from "../../contexts/userContext";
 
 const queryClient = new QueryClient();
 
@@ -50,11 +52,12 @@ export default function Layout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider value={{ darkMode, toggleDarkMode } as ThemeContextType}>
-        <div className="flex flex-col min-h-screen">
-          {/* Navbar fixed with fade effect */}
-          <header
-            className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
+      <UserContextProvider>
+        <ThemeProvider value={{ darkMode, toggleDarkMode } as ThemeContextType}>
+          <div className="flex flex-col min-h-screen">
+            {/* Navbar fixed with fade effect */}
+            <header
+              className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
               scrolled
                 ? "bg-white/80 dark:bg-gray-900/80 backdrop-blur shadow-md"
                 : "bg-transparent"
@@ -64,7 +67,7 @@ export default function Layout() {
           </header>
 
           {/* Main content in the center */}
-          <main className=" mt-32 mb-10">
+          <main className=" mt-36 mb-10">
             <Outlet />
           </main>
 
@@ -77,6 +80,7 @@ export default function Layout() {
           <Toaster />
         </div>
       </ThemeProvider>
+      </UserContextProvider>
     </QueryClientProvider>
   );
 }

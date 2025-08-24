@@ -11,6 +11,10 @@ import Wishlist from './Modules/User/Wishlist/Wishlist.tsx';
 import Login from './Modules/Auth/Login/Login.tsx';
 import Signup from './Modules/Auth/Signup/Signup.tsx';
 import ForgotPassword from './Modules/Auth/ForgotPassword/ForgotPassword.tsx';
+import SpecialProduct from './Modules/User/Products/specialProduct.tsx';
+import SpecialCategories from './Modules/User/Categories/specialCategories.tsx';
+import ProtectedRoutes from './shared_components/ProtectedRoutes/ProtectedRoutes.tsx';
+// import ProtectedRoutes from './shared_components/ProtectedRoutes/ProtectedRoutes.tsx';
 
 function App() {
 
@@ -19,12 +23,14 @@ function App() {
     {
       element: <Layout />,
       children: [
-        { index: true, element: <Home /> },
-        { path: 'categories', element: <Categories /> },
-        { path: 'cart', element: <Cart /> },
-        { path: 'brands', element: <Brands /> },
-        { path: 'products', element: <Products /> },
-        { path: 'wishlist', element: <Wishlist /> },
+        { index: true, element: <ProtectedRoutes><Home /></ProtectedRoutes> },
+        { path: 'categories', element: <ProtectedRoutes><Categories /></ProtectedRoutes> },
+        { path: 'specialCategories/:category', element: <ProtectedRoutes><SpecialCategories /></ProtectedRoutes> },
+        { path: 'cart', element: <ProtectedRoutes><Cart /></ProtectedRoutes> },
+        { path: 'brands', element: <ProtectedRoutes><Brands /></ProtectedRoutes> },
+        { path: 'products', element: <ProtectedRoutes><Products /></ProtectedRoutes> },
+        { path: 'special-products/:id/:category', element: <ProtectedRoutes><SpecialProduct /></ProtectedRoutes> },
+        { path: 'wishlist', element: <ProtectedRoutes><Wishlist /></ProtectedRoutes> },
         { path: 'login', element: <Login /> },
         { path: 'signup', element: <Signup /> },
         { path: 'forgot-password', element: <ForgotPassword /> },

@@ -42,7 +42,7 @@ const SpinnersCart = () => {
           animation: cartLines 2s ease-in-out infinite;
         }
         .cart__lines {
-          stroke: #00A63D;
+          stroke: #F54900;
         }
         .cart__top {
           animation-name: cartTop;

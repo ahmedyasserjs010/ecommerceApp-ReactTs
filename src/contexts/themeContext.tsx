@@ -1,16 +1,3 @@
-// ///  src/contexts/theme.js
-// import { createContext, useContext } from "react";
-
-// export const ThemeContext = createContext({
-//   darkMode: true,
-//   toggleDarkMode: () => {},
-// });
-// // localStorage.setItem("darkMode", true);
-// export const ThemeProvider = ThemeContext.Provider;
-
-// export default function useTheme() {
-//   return useContext(ThemeContext);
-// }
 
 import { createContext, useContext } from "react";
 import { ThemeContextType } from '../Types/ThemeContextType';

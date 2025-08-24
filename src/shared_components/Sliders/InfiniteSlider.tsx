@@ -1,11 +1,6 @@
 import React from 'react';
-//ANCHOR - import Images 
-import image1 from '../../assets/images/slider1_1.png';
-import image2 from '../../assets/images/slider1_2.png';
-import image3 from '../../assets/images/slider1_3.png';
-import image4 from '../../assets/images/slider1_4.png';
-import image5 from '../../assets/images/slider1_7.png';
-import image6 from '../../assets/images/slider1_6.png';
+import { useBrands } from '../../services/Brands_Categories/Hooks/Brands';
+import { IBrand } from '../../services/types';
 
 interface ImageObject {
     src: string;
@@ -166,7 +161,6 @@ const LogoSlider: React.FC<LogoSliderProps> = ({
                     object-fit: contain;
                     filter: brightness(1) contrast(1);
                     transition: all 0.3s ease;
-
                 }
 
                 /* Dark theme styles */
@@ -253,57 +247,73 @@ const LogoSlider: React.FC<LogoSliderProps> = ({
     );
 };
 
-// Demo usage of the component
-const LogoSliderDemo: React.FC = () => {
-    const logoImages: ImageObject[] = [
-        { src: image1, alt: 'Brand Logo 1' },
-        { src: image2, alt: 'Brand Logo 2' },
-        { src: image3, alt: 'Brand Logo 3' },
-        { src: image4, alt: 'Brand Logo 4' },
-        { src: image5, alt: 'Brand Logo 5' },
-        { src: image6, alt: 'Brand Logo 6' },
-    ];
+// ✅ الكومبوننت اللي هيجيب الداتا من الـ API ويعرضها
+const LogoSliderBrands: React.FC = () => {
+    const { data, isLoading, isError } = useBrands();
+
+    // لو بتحميل
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center min-h-[200px]">
+                <p className="text-gray-500 dark:text-gray-300">Loading brands...</p>
+            </div>
+        );
+    }
+
+    // لو حصل error
+    if (isError) {
+        return (
+            <div className="flex justify-center items-center min-h-[200px]">
+                <p className="text-red-500">Failed to load brands.</p>
+            </div>
+        );
+    }
+
+    // تحويل الداتا من API إلى الشكل المطلوب
+    const logoImages: ImageObject[] =
+        data?.data?.data?.map((brand: IBrand) => ({
+            src: brand.image,
+            alt: brand.name
+        })) || [];
+    console.log(logoImages);
 
     return (
-        <div style={{
-            margin: 0,
-            padding: '40px 0',
-            minHeight: '200px'
-        }}>
-            <main style={{
-                width: '100%',
-                margin: 'auto',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '60px'
-            }}>
+        <div
+            style={{
+                margin: 0,
+                padding: '40px 0',
+                minHeight: '200px'
+            }}
+        >
+            <main
+                style={{
+                    width: '100%',
+                    margin: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '60px'
+                }}
+            >
                 <div>
-                    <h2
-                    className='dark:text-white text-gray-900'
-                    style={{ 
-                        marginBottom: '30px', 
-                        textAlign: 'center',
-                        fontSize: '24px',
-                        fontWeight: '600',
-                    }}>
-                        Our Partners
-                    </h2>
+                    <h1 className="text-4xl text-center font-bold text-orange-600 mb-6">
+                        🏷️ All Brands
+                    </h1>
                     <LogoSlider
-                    className='border border-gray-300 rounded-lg overflow-hidden'
+                        className="border border-gray-300 rounded-lg overflow-hidden"
                         images={logoImages}
                         logoWidth={140}
                         logoHeight={90}
                         containerHeight={120}
-                        duration={25}
+                        duration={110}
                         pauseOnHover={true}
                         theme="auto"
                         gap={50}
+                        reverse={true} // 👈 false = من اليمين للشمال, true = من الشمال لليمين
                     />
                 </div>
-
             </main>
         </div>
     );
 };
 
-export default LogoSliderDemo;
+export default LogoSliderBrands;

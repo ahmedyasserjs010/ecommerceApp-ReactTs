@@ -224,7 +224,7 @@ export default function HomeCarousel() {
             {/* مؤشر التشغيل التلقائي */}
             <div className="absolute top-4 right-4 z-30">
                 <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    isAutoPlaying ? 'bg-green-400 animate-pulse' : 'bg-gray-400'
+                    isAutoPlaying ? 'bg-orange-400 animate-pulse' : 'bg-gray-400'
                 }`}></div>
             </div>
 

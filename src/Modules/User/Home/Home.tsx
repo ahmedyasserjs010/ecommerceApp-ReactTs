@@ -1,19 +1,20 @@
 import HomeCarousel from "../../../shared_components/Sliders/HomeCarousel";
-import LogoSliderDemo from "../../../shared_components/Sliders/InfiniteSlider";
+import LogoSliderBrands from "../../../shared_components/Sliders/InfiniteSlider";
 import InfiniteSlide from "../../../shared_components/Sliders/InfiniteSlider";
+import Categories from "../Categories/Categories";
+// import Categories from "";
+import Products from "../Products/Products";
 
 
 
 export default function Home() {
-  
+
   return (
     <>
       <HomeCarousel />
-      <LogoSliderDemo />
-
-      <h1 className="text-4xl font-bold mb-4">Hi there!</h1>
-      <p className="text-lg mb-8">Welcome to the Home Page.</p>
-      
+      <Categories />
+      <LogoSliderBrands />
+      <Products />
     </>
   );
 }
