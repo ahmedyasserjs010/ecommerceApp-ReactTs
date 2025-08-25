@@ -52,9 +52,9 @@ export default function Navbar() {
           <span className="text-3xl font-bold dark:text-white flex items-center gap-2">
             <img src={logo} alt="FreshCart" className="w-24" />
             <div className="flex">
-  <span className="text-orange-600">RIO</span>
-  <span className="text-gray-500 dark:text-gray-200">Max</span>
-</div>
+              <span className="text-orange-600">RIO</span>
+              <span className="text-gray-500 dark:text-gray-200">Max</span>
+            </div>
 
           </span>
         </Link>
@@ -150,7 +150,7 @@ export default function Navbar() {
               : null
           }
           {/* زرار الدارك مود */}
-          <DarkModeBtn setIsOpen={setIsOpen}/>
+          <DarkModeBtn setIsOpen={setIsOpen} />
 
           {
             userLogin !== null ?
@@ -232,7 +232,7 @@ export default function Navbar() {
           <div className="flex space-x-4 text-xl">
             {/* Cart Icon */}
             <NavLink
-            onClick={() => setIsOpen(false)}
+              onClick={() => setIsOpen(false)}
               to="/cart"
               className={({ isActive }) =>
                 `relative transition-all duration-300 ${isActive ? "scale-125 text-orange-600 dark:text-orange-300" : ""}`
@@ -247,7 +247,7 @@ export default function Navbar() {
 
             {/* Wishlist Icon */}
             <NavLink
-            onClick={() => setIsOpen(false)}
+              onClick={() => setIsOpen(false)}
               to="/wishlist"
               className={({ isActive }) =>
                 `relative transition-all duration-300 ${isActive ? "scale-125 text-orange-600 dark:text-orange-300" : ""}`

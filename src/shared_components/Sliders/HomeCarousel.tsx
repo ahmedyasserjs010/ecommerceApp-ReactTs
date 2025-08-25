@@ -5,8 +5,6 @@ import sliderImg5 from "../../assets/images/slider-image-5.jpeg";
 import sliderImg6 from "../../assets/images/slider-image-6.jpeg";
 import sliderImg7 from "../../assets/images/slider-image-7.jpeg";
 import sliderImg8 from "../../assets/images/slider-image-8.jpeg";
-
-
 export default function HomeCarousel() {
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);

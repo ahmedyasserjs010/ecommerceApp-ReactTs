@@ -295,8 +295,9 @@ const LogoSliderBrands: React.FC = () => {
                 }}
             >
                 <div>
-                    <h1 className="text-4xl text-center font-bold text-orange-600 mb-6">
-                        🏷️ All Brands
+                    <h1 className="text-4xl text-center font-bold dark:text-white text-black mb-6">
+                    🏷️ جميع العلامات التجارية الموجودة
+
                     </h1>
                     <LogoSlider
                         className="border border-gray-300 rounded-lg overflow-hidden"
