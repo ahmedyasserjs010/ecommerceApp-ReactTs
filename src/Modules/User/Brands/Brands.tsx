@@ -106,7 +106,7 @@ export default function Brands() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-4xl text-center font-bold text-orange-600 mb-6"
+        className="text-4xl text-center font-bold text-green-600 mb-6"
       >
         🏷️ All Brands
       </motion.h1>
@@ -168,7 +168,7 @@ export default function Brands() {
                 whileTap={{ scale: 0.9 }}
                 onClick={() => goToPage(index + 1)}
                 className={`px-4 py-2 rounded-lg ${currentPage === index + 1
-                    ? "bg-orange-600 text-white shadow-md"
+                    ? "bg-green-600 text-white shadow-md"
                     : "bg-gray-200 hover:bg-gray-300"
                   } transition-all duration-200`}
               >

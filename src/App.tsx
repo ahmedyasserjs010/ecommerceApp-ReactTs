@@ -1,4 +1,4 @@
-// import { useEffect, useState } from "react";
+//ANCHOR - App.tsx
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import Layout from "./shared_components/Layouts/Layout.tsx";

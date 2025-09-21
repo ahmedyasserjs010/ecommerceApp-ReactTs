@@ -142,7 +142,7 @@ export default function SpecialProduct() {
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-2 transition-colors duration-300">
               {productDetails.description}
             </p>
-            <p className="text-orange-600 dark:text-orange-400 font-bold text-xl mb-4 transition-colors duration-300">
+            <p className="text-green-600 dark:text-green-400 font-bold text-xl mb-4 transition-colors duration-300">
               {productDetails.price} EGP
             </p>
             <div className="flex items-center gap-1 text-yellow-500 dark:text-yellow-400 text-lg mb-6">
@@ -153,7 +153,7 @@ export default function SpecialProduct() {
               <button 
                 onClick={() => handleAddToCart(productDetails)}
                 disabled={loadingProductId === productDetails.id}
-                className="bg-orange-600 dark:bg-orange-500 hover:bg-orange-700 dark:hover:bg-orange-400 text-white px-6 py-2 rounded transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-green-600 dark:bg-green-500 hover:bg-green-700 dark:hover:bg-green-400 text-white px-6 py-2 rounded transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loadingProductId === productDetails.id ? (
                   <RingLoader size={20} color="#fff" />
@@ -166,7 +166,7 @@ export default function SpecialProduct() {
               <button 
                 onClick={() => handleLikeProduct(productDetails)}
                 disabled={likingProductId === productDetails.id}
-                className={`${likedProducts.has(productDetails.id) ? 'bg-red-600 dark:bg-red-500' : 'bg-orange-600 dark:bg-orange-500'} hover:bg-orange-700 dark:hover:bg-orange-400 text-white px-6 py-2 rounded transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed`}
+                className={`${likedProducts.has(productDetails.id) ? 'bg-red-600 dark:bg-red-500' : 'bg-green-600 dark:bg-green-500'} hover:bg-green-700 dark:hover:bg-green-400 text-white px-6 py-2 rounded transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 {likingProductId === productDetails.id ? (
                   <RingLoader size={20} color="#fff" />
@@ -189,7 +189,7 @@ export default function SpecialProduct() {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
           {relatedProducts.map((product: Product) => (
             <Link key={product.id} to={`/special-products/${product.id}/${product.category?.name}`}>
-              <div className="relative group bg-white dark:bg-gray-800 rounded-lg shadow-md shadow-orange-500/20 dark:shadow-orange-400/10 flex flex-col items-center text-center hover:shadow-lg dark:hover:shadow-orange-400/20 transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
+              <div className="relative group bg-white dark:bg-gray-800 rounded-lg shadow-md shadow-green-500/20 dark:shadow-green-400/10 flex flex-col items-center text-center hover:shadow-lg dark:hover:shadow-green-400/20 transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
                 <img 
                   src={product.imageCover} 
                   alt={product.title} 
@@ -202,7 +202,7 @@ export default function SpecialProduct() {
                       handleAddToCart(product);
                     }}
                     disabled={loadingProductId === product.id}
-                    className="bg-orange-500 dark:bg-orange-600 text-white font-semibold px-2 py-2 rounded-md hover:bg-orange-700 dark:hover:bg-orange-500 transition-all duration-500 transform -translate-x-20 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-green-500 dark:bg-green-600 text-white font-semibold px-2 py-2 rounded-md hover:bg-green-700 dark:hover:bg-green-500 transition-all duration-500 transform -translate-x-20 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 disabled:opacity-50 disabled:cursor-not-allowed"
                     title="Add to Cart"
                   >
                     {loadingProductId === product.id ? (
@@ -218,7 +218,7 @@ export default function SpecialProduct() {
                       handleLikeProduct(product);
                     }}
                     disabled={likingProductId === product.id}
-                    className={`${likedProducts.has(product.id) ? 'bg-red-500 dark:bg-red-600' : 'bg-orange-500 dark:bg-orange-600'} text-white font-semibold px-2 py-2 rounded-md hover:bg-orange-700 dark:hover:bg-orange-500 transition-all duration-500 transform translate-x-20 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 disabled:opacity-50 disabled:cursor-not-allowed`}
+                    className={`${likedProducts.has(product.id) ? 'bg-red-500 dark:bg-red-600' : 'bg-green-500 dark:bg-green-600'} text-white font-semibold px-2 py-2 rounded-md hover:bg-green-700 dark:hover:bg-green-500 transition-all duration-500 transform translate-x-20 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 disabled:opacity-50 disabled:cursor-not-allowed`}
                     title={likedProducts.has(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
                   >
                     {likingProductId === product.id ? (
@@ -229,7 +229,7 @@ export default function SpecialProduct() {
                   </button>
                 </div>
                 <div className="p-5 flex flex-col items-center text-center">
-                  <p className="text-orange-600 dark:text-orange-400 text-sm font-medium transition-colors duration-300">
+                  <p className="text-green-600 dark:text-green-400 text-sm font-medium transition-colors duration-300">
                     {product?.category?.name}
                   </p>
                   <h3 className="text-gray-800 dark:text-gray-200 font-semibold text-sm truncate w-full transition-colors duration-300">

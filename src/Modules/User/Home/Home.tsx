@@ -17,14 +17,14 @@ export default function HomeMain() {
 
   return (
     <>
-      <HomeMainSlider />
-      <Offers />
-      <Screens />
-      <Kitchen />
-      <Dishes />
+      
+      <HomeCarousel />
+      <Categories />
+
+      <Products />
+
 
       <LogoSliderBrands />
-      {/* <Products /> */}
     </>
   );
 }

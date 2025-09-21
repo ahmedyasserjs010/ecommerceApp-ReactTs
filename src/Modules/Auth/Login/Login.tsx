@@ -54,24 +54,17 @@ export default function Login() {
     }
 
     return (
-        <div className="flex flex-col md:flex-row justify-center items-center bg-orange-50 dark:bg-gray-900 rounded-4xl my-10 p-5 max-w-6xl mx-auto shadow-lg shadow-orange-400 dark:shadow-orange-400">
+        <div className="flex flex-col md:flex-row justify-center items-center bg-green-50 dark:bg-gray-900 rounded-4xl my-10 p-5 max-w-2xl mx-auto shadow-lg shadow-green-400 dark:shadow-green-400">
             
             {/* Lottie Section */}
-            <div className="w-full md:w-1/2 flex justify-center items-center p-5">
-                <DotLottieReact
-                    src="https://lottie.host/857450bd-c413-43de-a1f3-cd3c05c0eb4a/VtbiEKlQfJ.lottie"
-                    loop
-                    autoplay
-                    className="max-w-lg md:max-w-2xl w-full"
-                />
-            </div>
+        
 
             {/* Form Section */}
             <form
                 onSubmit={Formik.handleSubmit}
-                className="w-full md:w-1/2 bg-orange-50 dark:bg-gray-900 p-8 md:p-12 rounded-lg"
+                className=" md:w-1/1 bg-green-50 dark:bg-gray-900 p-8 md:p-12 rounded-lg"
             >
-                <h1 className="text-3xl font-bold mb-6 text-orange-700 dark:text-orange-600 text-center md:text-left">
+                <h1 className="text-3xl font-bold mb-6 text-green-700 dark:text-green-600 text-center md:text-left">
                     Login
                 </h1>
 
@@ -87,8 +80,8 @@ export default function Login() {
                         className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent 
                         border-0 border-b-2 border-gray-300 appearance-none 
                         dark:text-white dark:border-gray-600 
-                        dark:focus:border-orange-500 focus:outline-none focus:ring-0 
-                        focus:border-orange-600 peer"
+                        dark:focus:border-green-500 focus:outline-none focus:ring-0 
+                        focus:border-green-600 peer"
                         placeholder=" "
                         disabled={isPending}
                     />
@@ -96,8 +89,8 @@ export default function Login() {
                         htmlFor="email"
                         className="peer-focus:font-medium absolute text-sm text-gray-500 
                         dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 
-                        -z-10 origin-[0] peer-focus:start-0 peer-focus:text-orange-600 
-                        peer-focus:dark:text-orange-500 
+                        -z-10 origin-[0] peer-focus:start-0 peer-focus:text-green-600 
+                        peer-focus:dark:text-green-500 
                         peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 
                         peer-focus:scale-75 peer-focus:-translate-y-6"
                     >
@@ -122,8 +115,8 @@ export default function Login() {
                         className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent 
                         border-0 border-b-2 border-gray-300 appearance-none 
                         dark:text-white dark:border-gray-600 
-                        dark:focus:border-orange-500 focus:outline-none focus:ring-0 
-                        focus:border-orange-600 peer pr-8"
+                        dark:focus:border-green-500 focus:outline-none focus:ring-0 
+                        focus:border-green-600 peer pr-8"
                         placeholder=" "
                         disabled={isPending}
                     />
@@ -131,8 +124,8 @@ export default function Login() {
                         htmlFor="password"
                         className="peer-focus:font-medium absolute text-sm text-gray-500 
                         dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 
-                        -z-10 origin-[0] peer-focus:start-0 peer-focus:text-orange-600 
-                        peer-focus:dark:text-orange-500 
+                        -z-10 origin-[0] peer-focus:start-0 peer-focus:text-green-600 
+                        peer-focus:dark:text-green-500 
                         peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 
                         peer-focus:scale-75 peer-focus:-translate-y-6"
                     >
@@ -142,7 +135,7 @@ export default function Login() {
                     {/* Eye Icon Toggle */}
                     <button
                         type="button"
-                        className="absolute right-0 top-3 text-gray-500 dark:text-gray-400 hover:text-orange-600 dark:hover:text-orange-500 focus:outline-none"
+                        className="absolute right-0 top-3 text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-500 focus:outline-none"
                         onClick={() => setShowPassword(!showPassword)}
                         disabled={isPending}
                     >
@@ -160,9 +153,9 @@ export default function Login() {
                 <button
                     type="submit"
                     className="w-full sm:w-auto px-5 py-2.5 text-center text-white 
-                    bg-orange-700 hover:bg-orange-800 focus:ring-4 focus:outline-none 
-                    focus:ring-orange-300 font-medium rounded-lg text-sm 
-                    dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800 
+                    bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none 
+                    focus:ring-green-300 font-medium rounded-lg text-sm 
+                    dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 
                     disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={isPending}
                 >

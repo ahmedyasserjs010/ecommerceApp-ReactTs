@@ -15,8 +15,8 @@ onClick={() => {
       className={`  relative w-32 h-14 flex items-center px-2 rounded-full shadow-xl hover:cursor-pointer transition-all duration-300
         ${
           darkMode
-            ? "bg-gradient-to-r from-gray-600 to-gray-800 text-orange-400"
-            : "bg-gradient-to-r from-orange-300 to-orange-500 text-gray-800"
+            ? "bg-gradient-to-r from-gray-600 to-gray-800 text-green-400"
+            : "bg-gradient-to-r from-green-300 to-green-500 text-gray-800"
         }`}
     >
       {/* الكرة المتحركة */}
@@ -25,7 +25,7 @@ onClick={() => {
           ${darkMode ? "translate-x-16 bg-gray-800" : "translate-x-0 bg-white"}`}
       >
         {darkMode ? (
-          <Moon size={28} className="text-orange-400" />
+          <Moon size={28} className="text-green-400" />
         ) : (
           <Sun size={28} className="text-yellow-500" />
         )}
@@ -34,7 +34,7 @@ onClick={() => {
       {/* الأيقونات على الجانبين */}
       <div className="flex w-full justify-between items-center px-5 font-semibold">
         <Sun size={24} className={darkMode ? "text-gray-400" : "text-yellow-500"} />
-        <Moon size={24} className={darkMode ? "text-orange-600" : "text-gray-600"} />
+        <Moon size={24} className={darkMode ? "text-green-600" : "text-gray-600"} />
       </div>
     </button>
   );

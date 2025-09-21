@@ -62,7 +62,7 @@ export default function Categories() {
 
   return (
     <div className="container mx-auto mt-5 mb-5 ">
-      <h3 className="text-center text-3xl font-bold mb-8 text-orange-600 dark:text-orange-400">🛍️ Our Categories</h3>
+      <h3 className="text-center text-3xl font-bold mb-8 text-green-600 dark:text-green-400">🛍️ Our Categories</h3>
 
       <div className="relative overflow-hidden bg-white dark:bg-gray-900 py-6 rounded-xl shadow">
         <div
@@ -80,7 +80,7 @@ export default function Categories() {
                 key={`${cat._id}-${idx}`}
                 className="flex flex-col items-center justify-center min-w-[140px] md:min-w-[160px]"
               >
-                <div className="w-28 h-28 md:w-60  md:h-60 rounded-full overflow-hidden border-4 border-orange-100 shadow-lg">
+                <div className="w-28 h-28 md:w-60  md:h-60 rounded-full overflow-hidden border-4 border-green-100 shadow-lg">
                   <img
                     src={cat.image}
                     alt={cat.name}

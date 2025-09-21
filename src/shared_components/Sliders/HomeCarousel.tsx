@@ -222,7 +222,7 @@ export default function HomeCarousel() {
             {/* مؤشر التشغيل التلقائي */}
             <div className="absolute top-4 right-4 z-30">
                 <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    isAutoPlaying ? 'bg-orange-400 animate-pulse' : 'bg-gray-400'
+                    isAutoPlaying ? 'bg-green-400 animate-pulse' : 'bg-gray-400'
                 }`}></div>
             </div>
 
@@ -232,7 +232,7 @@ export default function HomeCarousel() {
                 className="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none opacity-100 transition-opacity duration-300" 
                 onClick={goToPrevious}
             >
-                {/* <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm dark:group-hover:bg-gray-300/90 group-hover:bg-white/40 dark:bg-orange-400/90 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none transition-all duration-300 transform group-hover:scale-110"> */}
+                {/* <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm dark:group-hover:bg-gray-300/90 group-hover:bg-white/40 dark:bg-green-400/90 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none transition-all duration-300 transform group-hover:scale-110"> */}
                 <span className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm dark:group-hover:bg-gray-300/90 group-hover:bg-white/40 dark:bg-gray-400/90 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none transition-all duration-300 transform group-hover:scale-110">
 
                     <svg className="w-5 h-5 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">

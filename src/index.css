@@ -2,3 +2,29 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 15px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #00A63D; /* green-500 */
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #00A63D; /* green-600 */
+}
+
+::-webkit-scrollbar-track {
+  background-color: #ffffff; /* gray-100 */
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background-color: #00A63D; /* dark green */
+}
+
+.dark ::-webkit-scrollbar-track {
+  background-color: #1f2937; /* gray-800 */
+}
