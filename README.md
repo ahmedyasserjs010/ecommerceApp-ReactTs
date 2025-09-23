@@ -1,48 +1,18 @@
-# 🌙 Dark Mode Toggle in React using Tailwind and Context API
-
-This tutorial demonstrates how to build a **Dark Mode Toggle** in **React.js** using **Tailwind CSS** and **Context API**.
-
----
-
-## 🚀 **Features**
-
-- 🎨 **Beautiful Dark Mode Toggle** with a glowing blue design.
-- 🔄 **Theme Persistence** using `localStorage`.
-- 🛠️ **Context Managment** using React's `Context API`
+A modern **React application** built with [Vite] that supports **Dark Mode & Light Mode**, smooth animations, responsive UI, and optimized performance.  
+This project demonstrates how to create a stunning web experience with **React 19**, **TailwindCSS 4**, and popular libraries like **Framer Motion**, **Swiper**, **React Query**, and more.
 
 ---
 
-## 🛠️ **Tech Stack**
+## 🚀 Features
 
-- **React.js** (with Vite)
-- **Tailwind CSS**
-- **lucide-react** (for the icons)
-
----
-
-## ⚙️ **Installation**
-
-1. **Clone the repository**
-
-```bash
-git clone https://github.com/AhmedYasser-js/dark_and_light_modeApp.git
-cd dark_and_light_modeApp
-```
-
-2. **Install dependencies**
-
-```bash
-npm install
-```
-
-3. **Start the development server**
-
-```bash
-npm run dev
-```
-
-## 🤝 **Contributing**
-
-Contributions are welcome! Feel free to **fork the repo**, **submit issues**, or **create pull requests**.
-
-**Happy Coding!** 🚀
+- 🌗 **Dark / Light Mode** toggle with smooth transitions  
+- 🎨 **TailwindCSS 4** for modern styling  
+- 🎞️ **Framer Motion** for animations & transitions  
+- 🔄 **React Query v5** for data fetching & caching  
+- 🔔 **React Hot Toast** for notifications  
+- 🌀 **Swiper.js** for responsive carousels & sliders  
+- 📜 **AOS (Animate on Scroll)** for scroll animations  
+- ✅ **Formik + Yup** for form handling & validation  
+- 🖼️ **FontAwesome & React Icons** for icons  
+- ⚡ **Vite** for lightning-fast builds & hot reload  
+- 🧹 **ESLint** setup with React & Query plugin for clean code  

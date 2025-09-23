@@ -9,6 +9,7 @@ import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../../contexts/userContext';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import loginAnimation from '../../../assets/images/login-B-8e9w5.webp';
 
 export default function Login() {
     const { mutate, isPending } = useLogin();
@@ -54,12 +55,8 @@ export default function Login() {
     }
 
     return (
-        <div className="flex flex-col md:flex-row justify-center items-center bg-green-50 dark:bg-gray-900 rounded-4xl my-10 p-5 max-w-2xl mx-auto shadow-lg shadow-green-400 dark:shadow-green-400">
-            
-            {/* Lottie Section */}
-        
-
-            {/* Form Section */}
+      <div className="flex flex-col md:flex-row justify-center items-center bg-green-50 dark:bg-gray-900 rounded-4xl my-10 p-5 max-w-6xl mx-auto shadow-lg shadow-green-400 dark:shadow-green-400"> 
+                  {/* Form Section */}
             <form
                 onSubmit={Formik.handleSubmit}
                 className=" md:w-1/1 bg-green-50 dark:bg-gray-900 p-8 md:p-12 rounded-lg"
@@ -131,7 +128,7 @@ export default function Login() {
                     >
                         Password
                     </label>
-                    
+
                     {/* Eye Icon Toggle */}
                     <button
                         type="button"
@@ -141,7 +138,7 @@ export default function Login() {
                     >
                         {showPassword ? <FaEye className="text-lg" /> : <FaEyeSlash className="text-lg" />}
                     </button>
-                    
+
                     {Formik.touched.password && Formik.errors.password && (
                         <div className="mt-2 text-sm px-3 py-2 rounded-md shadow-sm text-red-700 bg-red-100 dark:text-red-300 dark:bg-red-900/40">
                             {Formik.errors.password}
@@ -161,7 +158,13 @@ export default function Login() {
                 >
                     {isPending ? "Signing in..." : "Login"}
                 </button>
-            </form>
+            </form> 
+            {/* Lottie Section */}
+
+            <div className="w-full md:w-1/1 flex justify-center items-center p-5">
+            <img src={loginAnimation} alt=""  className="max-w-lg md:max-w-2xl w-full" />
+            </div>
+
         </div>
     );
 }

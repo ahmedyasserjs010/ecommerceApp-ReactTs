@@ -8,6 +8,7 @@ import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '../../../contexts/userContext';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import register from '../../../assets/images/register-e4QOwQg5.webp';
 
 export default function Signup() {
     const { mutate, isPending } = useSignup();
@@ -52,8 +53,9 @@ export default function Signup() {
     });
 
     return (
-        <div className="flex flex-col md:flex-row justify-center items-center bg-green-50 dark:bg-gray-900 shadow-lg shadow-green-400 dark:shadow-green-400 rounded-4xl p-5 max-w-2xl mx-auto">
+      <div className="flex flex-col md:flex-row justify-center items-center bg-green-50 dark:bg-gray-900 rounded-4xl my-10 p-5 max-w-6xl mx-auto shadow-lg shadow-green-400 dark:shadow-green-400"> 
             
+
 
             {/* Form Section */}
             <form
@@ -274,6 +276,13 @@ export default function Signup() {
                     {isPending ? "Creating account..." : "Sign Up"}
                 </button>
             </form>
+
+                                    {/* Lottie Section */}
+            
+                        <div className="w-full md:w-1/1 flex justify-center items-center p-5">
+                        <img src={register} alt=""  className="max-w-lg md:max-w-2xl w-full" />
+                        </div>
+            
         </div>
     );
 }
