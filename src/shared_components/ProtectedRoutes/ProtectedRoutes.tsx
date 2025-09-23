@@ -8,7 +8,7 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     if (user !== null) {
         return children;
     }else{
-        return <Navigate to="/login" replace />;
+        return <Navigate to="/signup" replace />;
     }
 
 }
