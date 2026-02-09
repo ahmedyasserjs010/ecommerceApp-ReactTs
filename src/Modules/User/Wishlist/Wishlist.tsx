@@ -59,7 +59,7 @@ export default function Wishlist() {
   if (isLoading && userLogin) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <RingLoader size={60} color="#f97316" />
+        <RingLoader size={60} color="#42db7a" />
       </div>
     );
   }

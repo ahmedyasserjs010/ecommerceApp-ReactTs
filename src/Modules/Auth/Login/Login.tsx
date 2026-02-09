@@ -94,8 +94,8 @@ export default function Login() {
         validationSchema: LoginSchema
     });
 
-    // Show spinner overlay during login process
-    if (isPending) {
+    // Show spinner overlay during login process or sync
+    if (isPending || isSyncing) {
         return <SpinnersCart />;
     }
 

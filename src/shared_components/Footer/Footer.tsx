@@ -42,7 +42,7 @@ export default function Footer() {
 
       {/* Small bottom text */}
       <div className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
-        © {new Date().getFullYear()} RIOMax . All rights reserved.
+        © {new Date().getFullYear()} FreshCart. All rights reserved.
       </div>
     </footer>
   );
