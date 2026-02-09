@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { FaCartPlus, FaHeart, FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import AOS from "aos";
@@ -9,13 +9,20 @@ import {
   useDisplayWishlist,
   useDeleteFromWishlist,
 } from "../../../services/Wishlist/Hooks/useWishlist";
+import { UserContext } from "../../../contexts/userContext";
+import { getGuestWishlist, removeFromGuestWishlist, GuestWishlistItem } from "../../../services/GuestStorage/guestStorage";
+import { useAddToCart } from "../../../services/Cart/Hooks/useCart";
+import { addToGuestCart } from "../../../services/GuestStorage/guestStorage";
 
 export default function Wishlist() {
   const { data: wishlistData, isLoading } = useDisplayWishlist();
   const removeMutation = useDeleteFromWishlist();
+  const { mutate: addToCart } = useAddToCart();
+  const { userLogin } = useContext(UserContext);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [loadingProductId, setLoadingProductId] = useState<string | null>(null);
+  const [guestWishlist, setGuestWishlist] = useState<GuestWishlistItem[]>([]);
 
   useEffect(() => {
     AOS.init({
@@ -25,12 +32,31 @@ export default function Wishlist() {
     });
   }, []);
 
-  const filteredItems =
-    wishlistData?.data?.filter((product) =>
-      product.title.toLowerCase().includes(searchTerm.toLowerCase())
-    ) || [];
+  // Load guest wishlist
+  useEffect(() => {
+    if (!userLogin) {
+      setGuestWishlist(getGuestWishlist());
+    }
+  }, [userLogin]);
 
-  if (isLoading) {
+  // Get items based on login status
+  const items = userLogin
+    ? wishlistData?.data || []
+    : guestWishlist.map(item => ({
+      id: item.productId,
+      productId: item.productId,
+      title: item.product.title,
+      price: item.product.price,
+      imageCover: item.product.imageCover,
+      category: item.product.category,
+      ratingsAverage: 0,
+    }));
+
+  const filteredItems = items.filter((product: any) =>
+    product.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (isLoading && userLogin) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <RingLoader size={60} color="#f97316" />
@@ -40,18 +66,47 @@ export default function Wishlist() {
 
   const handleAddToCart = (product: any) => {
     setLoadingProductId(product.id);
-    setTimeout(() => {
-      toast.success(`${product.title} added to cart successfully!`);
+
+    if (userLogin) {
+      addToCart({ productId: product.id, count: 1 }, {
+        onSuccess: () => {
+          toast.success(`${product.title} added to cart successfully!`);
+          setLoadingProductId(null);
+        },
+        onError: () => {
+          toast.error('Failed to add product to cart');
+          setLoadingProductId(null);
+        },
+      });
+    } else {
+      addToGuestCart({
+        productId: product.id,
+        count: 1,
+        product: {
+          id: product.id,
+          _id: product.id,
+          title: product.title,
+          price: product.price,
+          imageCover: product.imageCover,
+          category: product.category,
+        }
+      });
+      toast.success(`${product.title} added to cart!`);
       setLoadingProductId(null);
-    }, 1000);
+    }
   };
 
   const handleRemoveFromWishlist = (productId: string) => {
-    removeMutation.mutate(productId, {
-      onSuccess: () => toast.success("Item removed from wishlist!"),
-    });
+    if (userLogin) {
+      removeMutation.mutate(productId, {
+        onSuccess: () => toast.success("Item removed from wishlist!"),
+      });
+    } else {
+      removeFromGuestWishlist(productId);
+      setGuestWishlist(getGuestWishlist());
+      toast.success("Item removed from wishlist!");
+    }
   };
-
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
@@ -178,7 +233,7 @@ export default function Wishlist() {
           </div>
         )}
 
-        {(!wishlistData?.data || wishlistData.data.length === 0) &&
+        {items.length === 0 &&
           !searchTerm && (
             <div className="text-center py-12">
               <div className="text-6xl mb-4">💔</div>
@@ -197,7 +252,7 @@ export default function Wishlist() {
             </div>
           )}
 
-        
+
       </div>
     </div>
   );

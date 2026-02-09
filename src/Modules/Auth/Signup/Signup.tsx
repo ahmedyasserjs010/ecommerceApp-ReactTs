@@ -9,6 +9,9 @@ import { UserContext } from '../../../contexts/userContext';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import register from '../../../assets/images/register-e4QOwQg5.webp';
+import { getGuestCart, getGuestWishlist, clearAllGuestData, hasGuestData } from '../../../services/GuestStorage/guestStorage';
+import { addItemToCart } from '../../../services/Cart/CartApi';
+import { addItemToWishlist } from '../../../services/Wishlist/WishlistApi';
 
 export default function Signup() {
     const { mutate, isPending } = useSignup();
@@ -16,22 +19,64 @@ export default function Signup() {
     const { setUserLogin } = useContext(UserContext);
     const [showPassword, setShowPassword] = useState(false);
     const [showRePassword, setShowRePassword] = useState(false);
+    const [isSyncing, setIsSyncing] = useState(false);
 
-    function clearLocalStorage() {
-        localStorage.clear();
-    }
+    // Sync guest data to API
+    const syncGuestData = async (token: string) => {
+        const guestCart = getGuestCart();
+        const guestWishlist = getGuestWishlist();
 
-    useEffect(() => {
-        clearLocalStorage();
-    }, []);
+        if (guestCart.length === 0 && guestWishlist.length === 0) {
+            return;
+        }
+
+        setIsSyncing(true);
+
+        try {
+            // Sync cart items
+            for (const item of guestCart) {
+                try {
+                    await addItemToCart({ productId: item.productId, count: item.count });
+                } catch (error) {
+                    console.error('Failed to sync cart item:', item.productId, error);
+                }
+            }
+
+            // Sync wishlist items
+            for (const item of guestWishlist) {
+                try {
+                    await addItemToWishlist({ productId: item.productId });
+                } catch (error) {
+                    console.error('Failed to sync wishlist item:', item.productId, error);
+                }
+            }
+
+            // Clear guest data after successful sync
+            clearAllGuestData();
+
+            if (guestCart.length > 0 || guestWishlist.length > 0) {
+                toast.success(`Synced ${guestCart.length} cart items and ${guestWishlist.length} wishlist items!`);
+            }
+        } catch (error) {
+            console.error('Error syncing guest data:', error);
+        } finally {
+            setIsSyncing(false);
+        }
+    };
 
     function handleSubmit(values: SignupPayload) {
         mutate(values, {
-            onSuccess: (response) => {
+            onSuccess: async (response) => {
                 toast.success("Signup successful! 🎉");
                 localStorage.setItem("token", response.token);
                 localStorage.setItem("user", JSON.stringify(response.user));
                 setUserLogin(response.token);
+
+                // Sync guest data if exists
+                if (hasGuestData()) {
+                    await syncGuestData(response.token);
+                }
+
                 navigate("/");
             },
             onError: (error: any) => {
@@ -53,13 +98,13 @@ export default function Signup() {
     });
 
     return (
-      <div className="flex flex-col md:flex-row justify-center items-center bg-green-50 dark:bg-gray-900 rounded-4xl my-10 p-5 max-w-6xl mx-auto shadow-lg shadow-green-400 dark:shadow-green-400"> 
-            
+        <div className="flex flex-col md:flex-row justify-center items-center bg-green-50 dark:bg-gray-900 rounded-4xl my-10 p-5 max-w-6xl mx-auto shadow-lg shadow-green-400 dark:shadow-green-400">
+
 
 
             {/* Form Section */}
             <form
-                onSubmit={Formik.handleSubmit}  
+                onSubmit={Formik.handleSubmit}
                 className=" md:w-1/1 bg-green-50 dark:bg-gray-900 p-8 md:p-12 rounded-lg"
             >
                 <h1 className="text-3xl font-bold mb-6 text-green-700 dark:text-green-600 text-center md:text-left">
@@ -164,7 +209,7 @@ export default function Signup() {
                     >
                         Password
                     </label>
-                    
+
                     {/* Eye Icon Toggle for Password */}
                     <button
                         type="button"
@@ -174,7 +219,7 @@ export default function Signup() {
                     >
                         {showPassword ? <FaEye className="text-lg" /> : <FaEyeSlash className="text-lg" />}
                     </button>
-                    
+
                     {Formik.touched.password && Formik.errors.password && (
                         <div className="mt-2 text-sm px-3 py-2 rounded-md shadow-sm text-red-700 bg-red-100 dark:text-red-300 dark:bg-red-900/40">
                             {Formik.errors.password}
@@ -210,7 +255,7 @@ export default function Signup() {
                     >
                         Confirm Password
                     </label>
-                    
+
                     {/* Eye Icon Toggle for Confirm Password */}
                     <button
                         type="button"
@@ -220,7 +265,7 @@ export default function Signup() {
                     >
                         {showRePassword ? <FaEye className="text-lg" /> : <FaEyeSlash className="text-lg" />}
                     </button>
-                    
+
                     {Formik.touched.rePassword && Formik.errors.rePassword && (
                         <div className="mt-2 text-sm px-3 py-2 rounded-md shadow-sm text-red-700 bg-red-100 dark:text-red-300 dark:bg-red-900/40">
                             {Formik.errors.rePassword}
@@ -277,12 +322,12 @@ export default function Signup() {
                 </button>
             </form>
 
-                                    {/* Lottie Section */}
-            
-                        <div className="w-full md:w-1/1 flex justify-center items-center p-5">
-                        <img src={register} alt=""  className="max-w-lg md:max-w-2xl w-full" />
-                        </div>
-            
+            {/* Lottie Section */}
+
+            <div className="w-full md:w-1/1 flex justify-center items-center p-5">
+                <img src={register} alt="" className="max-w-lg md:max-w-2xl w-full" />
+            </div>
+
         </div>
     );
 }

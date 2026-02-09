@@ -5,73 +5,118 @@ import SpinnersCart from "../../../shared_components/SpinnersCart/SpinnersCart";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import emptyCart from "../../../assets/images/emptyCart1.png"
 import { Link } from "react-router-dom";
+import { useContext, useState, useEffect } from "react";
+import { UserContext } from "../../../contexts/userContext";
+import { getGuestCart, updateGuestCartItem, removeFromGuestCart, clearGuestCart, GuestCartItem } from "../../../services/GuestStorage/guestStorage";
 
 export default function Cart() {
   const { data, isLoading, error } = useDisplayCartItems();
   const { mutate: updateCartItem, isPending: isUpdating } = useUpdateCartItem();
   const { mutate: removeFromCart, isPending: isRemoving } = useRemoveFromCart();
   const { mutate: clearCart, isPending: isClearing } = useClearCart();
+  const { userLogin } = useContext(UserContext);
 
-  const products: ICartProduct[] = data?.data?.products || [];
-  const totalCartPrice = data?.data?.totalCartPrice || 0;
+  // Guest cart state
+  const [guestCartItems, setGuestCartItems] = useState<GuestCartItem[]>([]);
+
+  // Load guest cart on mount
+  useEffect(() => {
+    if (!userLogin) {
+      setGuestCartItems(getGuestCart());
+    }
+  }, [userLogin]);
+
+  // Get products based on login status
+  const products: ICartProduct[] | any[] = userLogin
+    ? data?.data?.products || []
+    : guestCartItems.map(item => ({
+      _id: item.productId,
+      count: item.count,
+      price: item.product.price,
+      product: {
+        id: item.productId,
+        _id: item.product._id,
+        title: item.product.title,
+        imageCover: item.product.imageCover,
+        category: item.product.category,
+        brand: item.product.brand,
+      }
+    }));
+
+  const totalCartPrice = userLogin
+    ? data?.data?.totalCartPrice || 0
+    : guestCartItems.reduce((sum, item) => sum + (item.product.price * item.count), 0);
 
   // Calculate totals
-  const subtotal = products.reduce((total, item) => total + (item.price * item.count), 0);
+  const subtotal = products.reduce((total: number, item: any) => total + (item.price * item.count), 0);
   const shipping = subtotal > 0 ? 0 : 0; // Free shipping
   const total = subtotal + shipping;
 
-  // Handle quantity update - using productId as in original Cart 1
+  // Handle quantity update
   const handleQuantityUpdate = (productId: string, newQuantity: number) => {
     if (newQuantity < 1) {
       toast.error("Quantity cannot be less than 1");
       return;
     }
 
-    console.log("Cart Component - updating item:", { productId, newQuantity });
-
-    updateCartItem(
-      { productId, count: newQuantity },
-      {
-        onSuccess: (data) => {
-          console.log("Update success:", data);
-          toast.success("Cart updated successfully");
-        },
-        onError: (error: any) => {
-          console.error("Error updating cart:", error);
-          toast.error("Failed to update cart");
-        },
-      }
-    );
+    if (userLogin) {
+      console.log("Cart Component - updating item:", { productId, newQuantity });
+      updateCartItem(
+        { productId, count: newQuantity },
+        {
+          onSuccess: (data) => {
+            console.log("Update success:", data);
+            toast.success("Cart updated successfully");
+          },
+          onError: (error: any) => {
+            console.error("Error updating cart:", error);
+            toast.error("Failed to update cart");
+          },
+        }
+      );
+    } else {
+      updateGuestCartItem(productId, newQuantity);
+      setGuestCartItems(getGuestCart());
+      toast.success("Cart updated successfully");
+    }
   };
 
-  // Handle increment - use product ID from item.product.id
-  const handleIncrement = (item: ICartProduct) => {
-    handleQuantityUpdate(item.product.id, item.count + 1);
+  // Handle increment
+  const handleIncrement = (item: any) => {
+    const productId = userLogin ? item.product.id : item.product.id;
+    handleQuantityUpdate(productId, item.count + 1);
   };
 
-  // Handle decrement - use product ID from item.product.id
-  const handleDecrement = (item: ICartProduct) => {
+  // Handle decrement
+  const handleDecrement = (item: any) => {
     if (item.count > 1) {
-      handleQuantityUpdate(item.product.id, item.count - 1);
+      const productId = userLogin ? item.product.id : item.product.id;
+      handleQuantityUpdate(productId, item.count - 1);
     } else {
       toast.error("Quantity cannot be less than 1");
     }
   };
 
-  // Handle remove item - use cart item ID (item._id)
+  // Handle remove item
   const handleRemoveItem = (productId: string, productTitle: string) => {
     console.log("Cart Component - removing item:", productId);
 
-    removeFromCart(productId, {
-      onSuccess: (data) => {
-        console.log("Remove success:", data);
-        toast.success(`${productTitle} removed from cart`);
-      },
-      onError: (error: any) => {
-        console.error("Error removing item:", error);
-        toast.error("Failed to remove item");
-      },
-    });
+    if (userLogin) {
+      removeFromCart(productId, {
+        onSuccess: (data) => {
+          console.log("Remove success:", data);
+          toast.success(`${productTitle} removed from cart`);
+        },
+        onError: (error: any) => {
+          console.error("Error removing item:", error);
+          toast.error("Failed to remove item");
+        },
+      });
+    } else {
+      removeFromGuestCart(productId);
+      setGuestCartItems(getGuestCart());
+      toast.success(`${productTitle} removed from cart`);
+    }
   };
 
   // Handle clear cart
@@ -82,21 +127,27 @@ export default function Cart() {
     }
 
     if (window.confirm("Are you sure you want to clear all items from your cart?")) {
-      clearCart(undefined, {
-        onSuccess: (data) => {
-          console.log("Clear cart success:", data);
-          toast.success("Cart cleared successfully");
-        },
-        onError: (error: any) => {
-          console.error("Error clearing cart:", error);
-          toast.error("Failed to clear cart");
-        },
-      });
+      if (userLogin) {
+        clearCart(undefined, {
+          onSuccess: (data) => {
+            console.log("Clear cart success:", data);
+            toast.success("Cart cleared successfully");
+          },
+          onError: (error: any) => {
+            console.error("Error clearing cart:", error);
+            toast.error("Failed to clear cart");
+          },
+        });
+      } else {
+        clearGuestCart();
+        setGuestCartItems([]);
+        toast.success("Cart cleared successfully");
+      }
     }
   };
 
-  if (isLoading) return <SpinnersCart />;
-  if (error) return <p className="text-red-600 text-center">Failed to load cart</p>;
+  if (isLoading && userLogin) return <SpinnersCart />;
+  if (error && userLogin) return <p className="text-red-600 text-center">Failed to load cart</p>;
 
   return (
     <div className="bg-gray-50 dark:bg-gray-900 py-8">
@@ -186,8 +237,8 @@ export default function Cart() {
                             onClick={() => handleDecrement(item)}
                             disabled={isUpdating || isRemoving || item.count <= 1}
                             className={`w-10 h-10 rounded-full border-2 flex items-center justify-center text-lg font-medium transition-all duration-200 ${item.count <= 1 || isUpdating || isRemoving
-                                ? 'border-gray-200 text-gray-300 cursor-not-allowed dark:border-gray-600 dark:text-gray-600'
-                                : 'border-gray-300 text-gray-600 hover:border-green-500 hover:text-green-500 dark:border-gray-500 dark:text-gray-300'
+                              ? 'border-gray-200 text-gray-300 cursor-not-allowed dark:border-gray-600 dark:text-gray-600'
+                              : 'border-gray-300 text-gray-600 hover:border-green-500 hover:text-green-500 dark:border-gray-500 dark:text-gray-300'
                               }`}
                           >
                             −
@@ -201,8 +252,8 @@ export default function Cart() {
                             onClick={() => handleIncrement(item)}
                             disabled={isUpdating || isRemoving}
                             className={`w-10 h-10 rounded-full border-2 flex items-center justify-center text-lg font-medium transition-all duration-200 ${isUpdating || isRemoving
-                                ? 'border-gray-200 text-gray-300 cursor-not-allowed dark:border-gray-600 dark:text-gray-600'
-                                : 'border-gray-300 text-gray-600 hover:border-green-500 hover:text-green-500 dark:border-gray-500 dark:text-gray-300'
+                              ? 'border-gray-200 text-gray-300 cursor-not-allowed dark:border-gray-600 dark:text-gray-600'
+                              : 'border-gray-300 text-gray-600 hover:border-green-500 hover:text-green-500 dark:border-gray-500 dark:text-gray-300'
                               }`}
                           >
                             +
@@ -295,12 +346,12 @@ export default function Cart() {
             <h3 className="text-2xl font-semibold mb-8 text-gray-800 dark:text-gray-100">
               Your cart is empty , <span className="text-gray-600 dark:text-gray-400 mb-8 text-xl">You haven't added anything to your cart yet.</span>
             </h3>
-             <Link 
-      to="/products" 
-      className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700"
-    >
-     Go to add Products
-    </Link>
+            <Link
+              to="/products"
+              className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              Go to add Products
+            </Link>
             <div className="max-w-md mx-auto mt-4">
               <img src={emptyCart} alt="" className=" rounded-full " />
             </div>

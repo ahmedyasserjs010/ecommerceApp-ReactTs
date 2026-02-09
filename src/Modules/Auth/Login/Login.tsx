@@ -10,28 +10,73 @@ import { UserContext } from '../../../contexts/userContext';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import loginAnimation from '../../../assets/images/login-B-8e9w5.webp';
+import { getGuestCart, getGuestWishlist, clearAllGuestData, hasGuestData } from '../../../services/GuestStorage/guestStorage';
+import { addItemToCart } from '../../../services/Cart/CartApi';
+import { addItemToWishlist } from '../../../services/Wishlist/WishlistApi';
 
 export default function Login() {
     const { mutate, isPending } = useLogin();
     const [showPassword, setShowPassword] = useState(false);
+    const [isSyncing, setIsSyncing] = useState(false);
     const { setUserLogin } = useContext(UserContext);
     const navigate = useNavigate();
 
-    function clearLocalStorage() {
-        localStorage.clear();
-    }
+    // Sync guest data to API
+    const syncGuestData = async (token: string) => {
+        const guestCart = getGuestCart();
+        const guestWishlist = getGuestWishlist();
 
-    useEffect(() => {
-        clearLocalStorage();
-    }, [])
+        if (guestCart.length === 0 && guestWishlist.length === 0) {
+            return;
+        }
+
+        setIsSyncing(true);
+
+        try {
+            // Sync cart items
+            for (const item of guestCart) {
+                try {
+                    await addItemToCart({ productId: item.productId, count: item.count });
+                } catch (error) {
+                    console.error('Failed to sync cart item:', item.productId, error);
+                }
+            }
+
+            // Sync wishlist items
+            for (const item of guestWishlist) {
+                try {
+                    await addItemToWishlist({ productId: item.productId });
+                } catch (error) {
+                    console.error('Failed to sync wishlist item:', item.productId, error);
+                }
+            }
+
+            // Clear guest data after successful sync
+            clearAllGuestData();
+
+            if (guestCart.length > 0 || guestWishlist.length > 0) {
+                toast.success(`Synced ${guestCart.length} cart items and ${guestWishlist.length} wishlist items!`);
+            }
+        } catch (error) {
+            console.error('Error syncing guest data:', error);
+        } finally {
+            setIsSyncing(false);
+        }
+    };
 
     function handleSubmit(values: LoginPayload) {
         mutate(values, {
-            onSuccess: (response) => {
+            onSuccess: async (response) => {
                 toast.success("Login successful! 🎉");
                 localStorage.setItem("token", response.token);
                 localStorage.setItem("user", JSON.stringify(response.user));
                 setUserLogin(response.token);
+
+                // Sync guest data if exists
+                if (hasGuestData()) {
+                    await syncGuestData(response.token);
+                }
+
                 navigate("/");
             },
             onError: (error: any) => {
@@ -55,8 +100,8 @@ export default function Login() {
     }
 
     return (
-      <div className="flex flex-col md:flex-row justify-center items-center bg-green-50 dark:bg-gray-900 rounded-4xl my-10 p-5 max-w-6xl mx-auto shadow-lg shadow-green-400 dark:shadow-green-400"> 
-                  {/* Form Section */}
+        <div className="flex flex-col md:flex-row justify-center items-center bg-green-50 dark:bg-gray-900 rounded-4xl my-10 p-5 max-w-6xl mx-auto shadow-lg shadow-green-400 dark:shadow-green-400">
+            {/* Form Section */}
             <form
                 onSubmit={Formik.handleSubmit}
                 className=" md:w-1/1 bg-green-50 dark:bg-gray-900 p-8 md:p-12 rounded-lg"
@@ -158,11 +203,11 @@ export default function Login() {
                 >
                     {isPending ? "Signing in..." : "Login"}
                 </button>
-            </form> 
+            </form>
             {/* Lottie Section */}
 
             <div className="w-full md:w-1/1 flex justify-center items-center p-5">
-            <img src={loginAnimation} alt=""  className="max-w-lg md:max-w-2xl w-full" />
+                <img src={loginAnimation} alt="" className="max-w-lg md:max-w-2xl w-full" />
             </div>
 
         </div>

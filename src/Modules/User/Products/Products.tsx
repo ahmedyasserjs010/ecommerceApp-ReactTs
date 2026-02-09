@@ -1,73 +1,154 @@
 //. Products Component
 
-import React, { useEffect, useState } from 'react';
-import { FaCartPlus, FaHeart } from "react-icons/fa";
+import React, { useContext, useEffect, useState } from 'react';
+import { FaCartPlus, FaHeart, FaRegHeart, FaCheck } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import { useProducts } from '../../../services/Products/Hooks/useProducts';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import SpinnersCart from '../../../shared_components/SpinnersCart/SpinnersCart';
-import { useAddToCart } from '../../../services/Cart/Hooks/useCart';
+import { useAddToCart, useDisplayCartItems } from '../../../services/Cart/Hooks/useCart';
 import { IProduct } from '../../../services/types';
 import { RingLoader } from 'react-spinners';
 import toast from 'react-hot-toast';
-import { useAddToWishlist } from '../../../services/Wishlist/Hooks/useWishlist';
-import { useDisplayWishlist } from "../../../services/Wishlist/Hooks/useWishlist";
+import { useAddToWishlist, useDeleteFromWishlist, useDisplayWishlist } from '../../../services/Wishlist/Hooks/useWishlist';
+import { UserContext } from '../../../contexts/userContext';
+import { addToGuestCart, addToGuestWishlist, getGuestCart, getGuestWishlist, removeFromGuestWishlist } from '../../../services/GuestStorage/guestStorage';
 
 export default function Products() {
   const { data, isLoading, isError, error } = useProducts();
   const [searchTerm, setSearchTerm] = useState("");
   const [loadingProductId, setLoadingProductId] = useState<string | null>(null);
-  const [likingProductId, setLikingProductId] = useState<string | null>(null); // حالة جديدة للتحميل أثناء الإعجاب
+  const [likingProductId, setLikingProductId] = useState<string | null>(null);
   const [displayedItemsCount, setDisplayedItemsCount] = useState(12);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const { mutate: addToCart } = useAddToCart();
+  const { data: cartData } = useDisplayCartItems();
   const { mutate: addToWishlist } = useAddToWishlist();
+  const { mutate: removeFromWishlist } = useDeleteFromWishlist();
   const { data: wishlistData } = useDisplayWishlist();
+  const { userLogin } = useContext(UserContext);
 
-  const wishlistIds = new Set(wishlistData?.data?.map((item) => item.productId));
+  // Guest state for UI updates
+  const [guestWishlistIds, setGuestWishlistIds] = useState<Set<string>>(new Set());
+  const [guestCartIds, setGuestCartIds] = useState<Set<string>>(new Set());
 
+  // Load guest data on mount
+  useEffect(() => {
+    if (!userLogin) {
+      const guestWishlist = getGuestWishlist();
+      setGuestWishlistIds(new Set(guestWishlist.map(item => item.productId)));
+      const guestCart = getGuestCart();
+      setGuestCartIds(new Set(guestCart.map(item => item.productId)));
+    }
+  }, [userLogin]);
 
-  // حالة جديدة لتخزين المنتجات المعجبة
-  // const [likedProducts, setLikedProducts] = useState<Set<string>>(new Set());
+  const wishlistIds = userLogin
+    ? new Set(wishlistData?.data?.map((item) => item.productId))
+    : guestWishlistIds;
+
+  const cartIds = userLogin
+    ? new Set(cartData?.data?.products?.map((item) => item.product.id))
+    : guestCartIds;
 
   const ITEMS_PER_LOAD = 10;
 
   const handleAddToCart = (product: IProduct) => {
     setLoadingProductId(product.id);
 
-    addToCart({
-      productId: product.id,
-      count: 1
-    }, {
-      onSuccess: () => {
-        toast.success(`${product.title} added to cart successfully!`);
-        setLoadingProductId(null);
-      },
-      onError: (error: any) => {
-        toast.error(error.message || 'Failed to add product to cart');
-        setLoadingProductId(null);
-      },
-    });
+    if (userLogin) {
+      // User is logged in - use API
+      addToCart({
+        productId: product.id,
+        count: 1
+      }, {
+        onSuccess: () => {
+          toast.success(`${product.title} added to cart successfully!`);
+          setLoadingProductId(null);
+        },
+        onError: (error: any) => {
+          toast.error(error.message || 'Failed to add product to cart');
+          setLoadingProductId(null);
+        },
+      });
+    } else {
+      // Guest user - save to localStorage
+      addToGuestCart({
+        productId: product.id,
+        count: 1,
+        product: {
+          id: product.id,
+          _id: product._id,
+          title: product.title,
+          price: product.price,
+          imageCover: product.imageCover,
+          category: product.category,
+          brand: product.brand,
+        }
+      });
+      setGuestCartIds(prev => new Set([...prev, product.id]));
+      toast.success(`${product.title} added to cart!`);
+      setLoadingProductId(null);
+    }
   };
 
   // دالة جديدة للتعامل مع الإعجاب
+  // Handle Like Product (Toggle)
   const handleLikeProduct = (product: IProduct) => {
     setLikingProductId(product.id);
+    const isLiked = wishlistIds.has(product.id);
 
-    addToWishlist({
-      productId: product.id,
-    }, {
-      onSuccess: () => {
+    if (userLogin) {
+      if (isLiked) {
+        removeFromWishlist(product.id, {
+          onSuccess: () => {
+            toast.success(`${product.title} removed from favorites!`);
+            setLikingProductId(null);
+          },
+          onError: (error: any) => {
+            toast.error(error.message || 'Failed to remove from favorites');
+            setLikingProductId(null);
+          }
+        });
+      } else {
+        addToWishlist({
+          productId: product.id,
+        }, {
+          onSuccess: () => {
+            toast.success(`${product.title} added to favorites!`);
+            setLikingProductId(null);
+          },
+          onError: (error: any) => {
+            toast.error(error.message || 'Failed to add product to favorites');
+            setLikingProductId(null);
+          },
+        });
+      }
+    } else {
+      if (isLiked) {
+        removeFromGuestWishlist(product.id);
+        const newSet = new Set(guestWishlistIds);
+        newSet.delete(product.id);
+        setGuestWishlistIds(newSet);
+        toast.success(`${product.title} removed from favorites!`);
+      } else {
+        addToGuestWishlist({
+          productId: product.id,
+          product: {
+            id: product.id,
+            _id: product._id,
+            title: product.title,
+            price: product.price,
+            imageCover: product.imageCover,
+            category: product.category,
+            brand: product.brand,
+          }
+        });
+        setGuestWishlistIds(prev => new Set([...prev, product.id]));
         toast.success(`${product.title} added to favorites!`);
-        setLikingProductId(null);
-      },
-      onError: (error: any) => {
-        toast.error(error.message || 'Failed to add product to favorites');
-        setLikingProductId(null);
-      },
-    });
-
+      }
+      setLikingProductId(null);
+    }
   };
 
   const handleLoadMore = () => {
@@ -184,8 +265,8 @@ export default function Products() {
                 <button
                   onClick={() => handleAddToCart(product)}
                   disabled={loadingProductId === product.id}
-                  className="
-                            bg-green-500 dark:bg-green-600 
+                  className={`
+                            ${cartIds.has(product.id) ? 'bg-green-700 dark:bg-green-500' : 'bg-green-500 dark:bg-green-600'}
                             text-white font-semibold px-2 py-2 rounded-md 
                             hover:bg-green-700 dark:hover:bg-green-500 
                             transition-all duration-500 transform 
@@ -193,21 +274,21 @@ export default function Products() {
                             md:-translate-x-20 md:opacity-0 
                             md:group-hover:translate-x-0 md:group-hover:opacity-100 
                             disabled:opacity-50 disabled:cursor-not-allowed
-                          "
-                  title="Add to Cart"
+                          `}
+                  title={cartIds.has(product.id) ? "In Cart" : "Add to Cart"}
                 >
                   {loadingProductId === product.id ? (
                     <RingLoader size={20} color="#fff" />
                   ) : (
-                    <FaCartPlus className="text-2xl" />
+                    cartIds.has(product.id) ? <FaCheck className="text-2xl" /> : <FaCartPlus className="text-2xl" />
                   )}
                 </button>
 
 
-<button
-  onClick={() => handleLikeProduct(product)}
-  disabled={likingProductId === product.id}
-  className={`
+                <button
+                  onClick={() => handleLikeProduct(product)}
+                  disabled={likingProductId === product.id}
+                  className={`
     ${wishlistIds.has(product.id) ? "bg-red-500 dark:bg-red-600" : "bg-green-500 dark:bg-green-600"}
     text-white font-semibold px-2 py-2 rounded-md 
     hover:bg-green-700 dark:hover:bg-green-500 
@@ -217,14 +298,16 @@ export default function Products() {
     md:group-hover:translate-x-0 md:group-hover:opacity-100 
     disabled:opacity-50 disabled:cursor-not-allowed
   `}
-  title={wishlistIds.has(product.id) ? "Already in Wishlist" : "Add to Wishlist"}
->
-  {likingProductId === product.id ? (
-    <RingLoader size={20} color="#fff" />
-  ) : (
-    <FaHeart className={`text-2xl ${wishlistIds.has(product.id) ? "text-red-500" : "text-white"}`} />
-  )}
-</button>
+                  title={wishlistIds.has(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
+                >
+                  {likingProductId === product.id ? (
+                    <RingLoader size={20} color="#fff" />
+                  ) : (
+                    wishlistIds.has(product.id)
+                      ? <FaHeart className="text-2xl text-white" />
+                      : <FaRegHeart className="text-2xl" />
+                  )}
+                </button>
 
 
               </div>

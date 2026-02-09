@@ -1,5 +1,5 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { use, useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { FaBars, FaTimes, FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaCartPlus, FaHeart } from "react-icons/fa";
 import DarkModeBtn from "../DarkModeBtn"
 import { useDisplayWishlist } from "../../services/Wishlist/Hooks/useWishlist";
@@ -10,6 +10,7 @@ import { UserContext } from "../../contexts/userContext";
 import Swal from "sweetalert2";
 import { useDisplayCartItems } from "../../services/Cart/Hooks/useCart";
 import { ICartProduct } from "../../services/types";
+import { getGuestCart, getGuestWishlist } from "../../services/GuestStorage/guestStorage";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,9 +21,27 @@ export default function Navbar() {
 
   const products: ICartProduct[] = data?.data?.products || [];
 
+  // Guest counts
+  const [guestCartCount, setGuestCartCount] = useState(0);
+  const [guestWishlistCount, setGuestWishlistCount] = useState(0);
 
+  // Update guest counts periodically
+  useEffect(() => {
+    const updateGuestCounts = () => {
+      if (!userLogin) {
+        setGuestCartCount(getGuestCart().reduce((sum, item) => sum + item.count, 0));
+        setGuestWishlistCount(getGuestWishlist().length);
+      }
+    };
 
-  const wishlistCount = wishlistData?.count || 0;
+    updateGuestCounts();
+    const interval = setInterval(updateGuestCounts, 1000);
+    return () => clearInterval(interval);
+  }, [userLogin]);
+
+  // Get counts based on login status
+  const cartCount = userLogin ? products.reduce((sum, item) => sum + item.count, 0) : guestCartCount;
+  const wishlistCount = userLogin ? (wishlistData?.count || 0) : guestWishlistCount;
 
   function LogOut() {
     Swal.fire({
@@ -78,25 +97,22 @@ export default function Navbar() {
 
 </div> */}
         {/* Desktop Menu */}
-        {
-          userLogin !== null ?
-            <div className="hidden lg:flex">
-              {navLinks.map((link) => (
-                <NavLink
-                  key={link.path}
-                  to={link.path}
-                  className={({ isActive }) =>
-                    `px-3 py-2 rounded-md text-lg font-medium transition-all duration-300 ${isActive
-                      ? "bg-green-600 text-white shadow-md"
-                      : "hover:bg-green-100 hover:dark:bg-green-800 hover:text-green-600 dark:hover:text-green-300"
-                    }`
-                  }
-                >
-                  {link.label}
-                </NavLink>
-              ))}
-            </div> : null
-        }
+        <div className="hidden lg:flex">
+          {navLinks.map((link) => (
+            <NavLink
+              key={link.path}
+              to={link.path}
+              className={({ isActive }) =>
+                `px-3 py-2 rounded-md text-lg font-medium transition-all duration-300 ${isActive
+                  ? "bg-green-600 text-white shadow-md"
+                  : "hover:bg-green-100 hover:dark:bg-green-800 hover:text-green-600 dark:hover:text-green-300"
+                }`
+              }
+            >
+              {link.label}
+            </NavLink>
+          ))}
+        </div>
 
         {/* Desktop Right Section */}
         <div className="hidden lg:flex items-center space-x-4">
@@ -129,39 +145,39 @@ export default function Navbar() {
               </div> : null}
 
 
-          {
-            userLogin !== null ?
-              <div className="flex space-x-4 text-xl">
-                {/* Cart Icon */}
-                <NavLink
-                  to="/cart"
-                  className={({ isActive }) =>
-                    `relative transition-all duration-300 ${isActive ? "scale-125 text-green-600 dark:text-green-300" : ""}`
-                  }
-                >
-                  <FaCartPlus className="cursor-pointer text-3xl hover:text-green-600 dark:hover:text-green-300 transition-colors duration-300" />
-                  {/* Badge */}
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                    {products.reduce((total, item) => total + item.count, 0)}
-                  </span>
-                </NavLink>
+          <div className="flex space-x-4 text-xl">
+            {/* Cart Icon */}
+            <NavLink
+              to="/cart"
+              className={({ isActive }) =>
+                `relative transition-all duration-300 ${isActive ? "scale-125 text-green-600 dark:text-green-300" : ""}`
+              }
+            >
+              <FaCartPlus className="cursor-pointer text-3xl hover:text-green-600 dark:hover:text-green-300 transition-colors duration-300" />
+              {/* Badge */}
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </NavLink>
 
-                {/* Wishlist Icon */}
-                <NavLink
-                  to="/wishlist"
-                  className={({ isActive }) =>
-                    `relative transition-all duration-300 ${isActive ? "scale-125 text-green-600 dark:text-green-300" : ""}`
-                  }
-                >
-                  <FaHeart className="cursor-pointer text-3xl hover:text-green-600 dark:hover:text-green-300 transition-colors duration-300" />
-                  {/* Badge */}
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                    {wishlistCount}
-                  </span>
-                </NavLink>
-              </div>
-              : null
-          }
+            {/* Wishlist Icon */}
+            <NavLink
+              to="/wishlist"
+              className={({ isActive }) =>
+                `relative transition-all duration-300 ${isActive ? "scale-125 text-green-600 dark:text-green-300" : ""}`
+              }
+            >
+              <FaHeart className="cursor-pointer text-3xl hover:text-green-600 dark:hover:text-green-300 transition-colors duration-300" />
+              {/* Badge */}
+              {wishlistCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {wishlistCount}
+                </span>
+              )}
+            </NavLink>
+          </div>
           {/* زرار الدارك مود */}
           <DarkModeBtn setIsOpen={setIsOpen} />
 
@@ -188,100 +204,98 @@ export default function Navbar() {
         className={` lg:hidden flex flex-col items-center text-center bg-green-50 dark:bg-gray-900 px-6 pb-3 space-y-4 transition-all duration-500 ease-in-out ${isOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0 overflow-hidden"
           }`}
       >
-        {
-          userLogin !== null ? (
-            <>
-              {navLinks.map((link) => (
-                <NavLink
-                  key={link.path}
-                  to={link.path}
-                  onClick={() => setIsOpen(false)}
-                  className={({ isActive }) =>
-                    `block px-3 py-2 rounded-md text-lg font-medium transition-all duration-300 ${isActive
-                      ? "bg-green-600 text-white shadow-md w-[30%]"
-                      : "hover:bg-green-100 hover:dark:bg-green-800 hover:text-green-600 dark:hover:text-green-300 w-[60%]"
-                    }`
-                  }
-                >
-                  {link.label}
-                </NavLink>
-              ))}
-              <hr className="my-2 dark:border-green-500 border-green-700 border-2 rounded-4xl w-50" />
-            </>
-          ) : null
-        }
-
-
-        <div className="flex gap-1">
+        {navLinks.map((link) => (
           <NavLink
-            to="/login"
+            key={link.path}
+            to={link.path}
             onClick={() => setIsOpen(false)}
             className={({ isActive }) =>
-              `px-3 py-2 rounded-md text-lg font-medium transition-all duration-300 ${isActive
-                ? "bg-green-600 text-white shadow-md"
-                : "hover:bg-green-100 hover:dark:bg-green-800 hover:text-green-600 dark:hover:text-green-300"
+              `block px-3 py-2 rounded-md text-lg font-medium transition-all duration-300 ${isActive
+                ? "bg-green-600 text-white shadow-md w-[30%]"
+                : "hover:bg-green-100 hover:dark:bg-green-800 hover:text-green-600 dark:hover:text-green-300 w-[60%]"
               }`
             }
           >
-            Login
+            {link.label}
           </NavLink>
+        ))}
+        <hr className="my-2 dark:border-green-500 border-green-700 border-2 rounded-4xl w-50" />
 
-          <NavLink
-            to="/signup"
-            onClick={() => setIsOpen(false)}
-            className={({ isActive }) =>
-              `px-3 py-2 rounded-md text-lg font-medium transition-all duration-300 ${isActive
-                ? "bg-green-600 text-white shadow-md"
-                : "hover:bg-green-100 hover:dark:bg-green-800 hover:text-green-600 dark:hover:text-green-300"
-              }`
-            }
-          >
-            Signup
-          </NavLink>
-        </div>
 
-        {userLogin !== null ? (
-
-          <div className="flex space-x-4 text-xl">
-            {/* Cart Icon */}
+        {userLogin === null && (
+          <div className="flex gap-1">
             <NavLink
+              to="/login"
               onClick={() => setIsOpen(false)}
-              to="/cart"
               className={({ isActive }) =>
-                `relative transition-all duration-300 ${isActive ? "scale-125 text-green-600 dark:text-green-300" : ""}`
+                `px-3 py-2 rounded-md text-lg font-medium transition-all duration-300 ${isActive
+                  ? "bg-green-600 text-white shadow-md"
+                  : "hover:bg-green-100 hover:dark:bg-green-800 hover:text-green-600 dark:hover:text-green-300"
+                }`
               }
             >
-              <FaCartPlus className="cursor-pointer text-3xl hover:text-green-600 dark:hover:text-green-300 transition-colors duration-300" />
-              {/* Badge */}
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                {products.reduce((total, item) => total + item.count, 0)}
-              </span>
+              Login
             </NavLink>
 
-            {/* Wishlist Icon */}
             <NavLink
+              to="/signup"
               onClick={() => setIsOpen(false)}
-              to="/wishlist"
               className={({ isActive }) =>
-                `relative transition-all duration-300 ${isActive ? "scale-125 text-green-600 dark:text-green-300" : ""}`
+                `px-3 py-2 rounded-md text-lg font-medium transition-all duration-300 ${isActive
+                  ? "bg-green-600 text-white shadow-md"
+                  : "hover:bg-green-100 hover:dark:bg-green-800 hover:text-green-600 dark:hover:text-green-300"
+                }`
               }
             >
-              <FaHeart className="cursor-pointer text-3xl hover:text-green-600 dark:hover:text-green-300 transition-colors duration-300" />
-              {/* Badge */}
+              Signup
+            </NavLink>
+          </div>
+        )}
+
+        <div className="flex space-x-4 text-xl">
+          {/* Cart Icon */}
+          <NavLink
+            onClick={() => setIsOpen(false)}
+            to="/cart"
+            className={({ isActive }) =>
+              `relative transition-all duration-300 ${isActive ? "scale-125 text-green-600 dark:text-green-300" : ""}`
+            }
+          >
+            <FaCartPlus className="cursor-pointer text-3xl hover:text-green-600 dark:hover:text-green-300 transition-colors duration-300" />
+            {/* Badge */}
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                {cartCount}
+              </span>
+            )}
+          </NavLink>
+
+          {/* Wishlist Icon */}
+          <NavLink
+            onClick={() => setIsOpen(false)}
+            to="/wishlist"
+            className={({ isActive }) =>
+              `relative transition-all duration-300 ${isActive ? "scale-125 text-green-600 dark:text-green-300" : ""}`
+            }
+          >
+            <FaHeart className="cursor-pointer text-3xl hover:text-green-600 dark:hover:text-green-300 transition-colors duration-300" />
+            {/* Badge */}
+            {wishlistCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                 {wishlistCount}
               </span>
-            </NavLink>
-          </div>
-
-        ) : null}
+            )}
+          </NavLink>
+        </div>
 
         {/* زرار الدارك مود في الموبايل */}
         <DarkModeBtn setIsOpen={setIsOpen} />
 
-        <button onClick={LogOut} className="cursor-pointer w-full text-center text-2xl font-medium text-gray-600 dark:text-gray-200 hover:text-green-600 dark:hover:text-green-300 transition-colors duration-300">
-          Logout
-        </button>
+        {userLogin !== null && (
+          <button onClick={LogOut} className="cursor-pointer w-full text-center text-2xl font-medium text-gray-600 dark:text-gray-200 hover:text-green-600 dark:hover:text-green-300 transition-colors duration-300">
+            Logout
+          </button>
+        )}
 
 
       </div>
